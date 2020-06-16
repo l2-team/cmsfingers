@@ -1,2 +1,3 @@
-# cmsfingers
-CMS指纹字典
+# CMS指纹字典
+## 搜集国内/外常见CMS指纹
+____
