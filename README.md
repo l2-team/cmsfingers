@@ -16,7 +16,7 @@ ____
 {
     "cms": "dedecms",
     "file_type": "css",
-    "type": "md5/keyword/re"
+    "type": "md5/keyword/re",
     "md5": "[md5值]",
     "path": "/public/static/css/style.css",
     "uptime": "2019-05-21 19:03:43"
