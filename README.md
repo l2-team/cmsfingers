@@ -8,7 +8,6 @@ ____
 ### CMS 格式
 + `cms` cms名字, 英文小写
 + `type` 文件类型
-+ `type_size` 文件大小
 + `md5` md5值
 + `path` 路径
 + `uptime` 更新时间/增添时间
