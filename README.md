@@ -25,23 +25,27 @@ ____
 
 #### 批量扫描脚本使用
 ```shell
-➜  cmsfingers git:(master) python3 finger.py -h
+➜  cmsfingers git:(master) ✗ python3 finger.py -h
 Usage: finger.py -u "http://xxxx.com" -t threads_number
 
 Options:
   -h, --help            show this help message and exit
   -u URL, --url=URL     目标URL
   -f FILE, --file=FILE  url文件
+  -s FINGERS, --fingers=FINGERS
+                        指定指纹文件
   -t THREADS, --threads=THREADS
                         线程大小, 默认为 10
 ```
 + `-u` 目标URL
 + `-f` 目标URL文件
 + `-t` 线程
++ `-s` 指定要扫描的指纹文件
 
 
 ### 已更新记录
 + 2020年07月20日 更新 `200`个CMS, 指纹数量共 `997`个
 + 2020年07月22日 目前共 `200`个CMS, 指纹数量共 `1493`个
 + 2020年07月28日 目前共 `300`个, 指纹数量共 `1982`个
-+ 更新脚本, 带上 `-f` 参数
++ 2020年07月29日更新脚本, 带上 `-f` 参数
++ 2020年07月29日更新脚本, 带上 `-s` 参数, 用来指定指纹文件

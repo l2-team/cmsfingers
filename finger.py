@@ -50,12 +50,12 @@ def get_request_md5(url, path, pattern):
     return False
 
 
-def load_cms_fingers():
+def load_cms_fingers(fingers):
     """
     加载CMS指纹
     :return:
     """
-    with open("fingers_simple.json") as f:
+    with open(fingers) as f:
         data = json.load(f)
 
     print("Update Time: {}".format(data.get("update_time")))
@@ -78,6 +78,7 @@ def check_thread(item):
     global SCAN_COMPLATED
     url, finger = item
     path = finger.get("path")
+    path = path if path[0] == "/" else "/" + path
 
     threadingLock.acquire()
     show_count += 1
@@ -90,12 +91,16 @@ def check_thread(item):
 
         result = get_request_md5(url, path, match_pattern)
 
-        if result and not SCAN_COMPLATED:
-            print("\nHint CMS名称: {}".format(finger.get("cms")))
-            print("Hint 指纹文件: {}".format(finger.get("path")))
-            print("Hint Md5: {}\n".format(finger.get("match_pattern")))
-            SCAN_COMPLATED = True
-            raise Exception("任务结束")
+        if result:
+            threadingLock.acquire()
+            if not SCAN_COMPLATED:
+                print("\nHint CMS名称: {}".format(finger.get("cms")))
+                print("Hint 指纹文件: {}".format(finger.get("path")))
+                print("Hint Md5: {}\n".format(finger.get("match_pattern")))
+                SCAN_COMPLATED = True
+                threadingLock.release()
+                raise Exception("任务结束")
+            threadingLock.release()
 
 
 if __name__ == '__main__':
@@ -103,6 +108,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage=usage)
     parser.add_option("-u", "--url", dest="url", help="目标URL")
     parser.add_option("-f", "--file", dest="file", help="url文件", default=None)
+    parser.add_option("-s", "--fingers", dest="fingers", help="指定指纹文件", default="fingers_simple.json")
     parser.add_option("-t", "--threads", dest="threads", type="int", default=10, help="线程大小, 默认为 10")
     options, args = parser.parse_args()
 
@@ -110,7 +116,7 @@ if __name__ == '__main__':
         parser.print_help()
         exit(0)
 
-    fingers = load_cms_fingers()
+    fingers = load_cms_fingers(options.fingers)
 
     if options.file:
         urls = read_url_file_to_list(options.file)
