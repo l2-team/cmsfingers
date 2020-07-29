@@ -63,6 +63,16 @@ def load_cms_fingers():
     return data['data']
 
 
+def read_url_file_to_list(filename):
+    """
+    读 URL 文件为列表
+    :param filename:
+    :return:
+    """
+    with open(filename) as f:
+        return [x.strip() for x in f.readlines()]
+
+
 def check_thread(item):
     global show_count
     global SCAN_COMPLATED
@@ -80,10 +90,10 @@ def check_thread(item):
 
         result = get_request_md5(url, path, match_pattern)
 
-        if result:
+        if result and not SCAN_COMPLATED:
             print("\nHint CMS名称: {}".format(finger.get("cms")))
             print("Hint 指纹文件: {}".format(finger.get("path")))
-            print("Hint Md5: {}".format(finger.get("match_pattern")))
+            print("Hint Md5: {}\n".format(finger.get("match_pattern")))
             SCAN_COMPLATED = True
             raise Exception("任务结束")
 
@@ -92,24 +102,34 @@ if __name__ == '__main__':
     usage = "%prog -u \"http://xxxx.com\" -t threads_number"
     parser = OptionParser(usage=usage)
     parser.add_option("-u", "--url", dest="url", help="目标URL")
+    parser.add_option("-f", "--file", dest="file", help="url文件", default=None)
     parser.add_option("-t", "--threads", dest="threads", type="int", default=10, help="线程大小, 默认为 10")
     options, args = parser.parse_args()
 
-    if not options.url:
+    if not options.url and not options.file:
         parser.print_help()
         exit(0)
 
     fingers = load_cms_fingers()
-    url = options.url
 
-    fingers_count = len(fingers)
+    if options.file:
+        urls = read_url_file_to_list(options.file)
+    else:
+        urls = [options.url]
 
-    executor = ThreadPoolExecutor(max_workers=options.threads)
-    tasks = [executor.submit(check_thread, ((url, finger))) for finger in fingers]
+    for url in urls:
+        SCAN_COMPLATED = False
+        show_count = 0
 
-    wait(tasks, return_when=FIRST_EXCEPTION)
+        print(" 扫描目标: {}".format(url))
+        fingers_count = len(fingers)
 
-    for task in reversed(tasks):
-        task.cancel()
+        executor = ThreadPoolExecutor(max_workers=options.threads)
+        tasks = [executor.submit(check_thread, ((url, finger))) for finger in fingers]
 
-    wait(tasks, return_when=ALL_COMPLETED)
+        wait(tasks, return_when=FIRST_EXCEPTION)
+
+        for task in reversed(tasks):
+            task.cancel()
+
+        wait(tasks, return_when=ALL_COMPLETED)
