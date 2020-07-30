@@ -5,6 +5,10 @@ ____
 > 字典慢慢更新
 > 部分指纹上传之后会更新一个多线程扫描脚本
 
+## 其他工具搭配使用
++ [cms exp/poc](https://github.com/1oid/cms_poc_exp)
++ [插件化cms漏洞扫描](https://github.com/1oid/cms_poc_exp/tree/dev)
+
 ### CMS 格式
 + `cms` cms名字, 英文小写
 + `file_type` 文件类型
